@@ -1,66 +1,3 @@
-<?php
-declare(strict_types=1);
-
-function escapeContactValue(string $value): string
-{
-    return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-}
-
-function contactField(string $key): string
-{
-    $value = $_POST[$key] ?? '';
-    return is_string($value) ? trim($value) : '';
-}
-
-$name = '';
-$email = '';
-$message = '';
-$formError = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    header('Cache-Control: no-store');
-
-    $name = contactField('name');
-    $email = contactField('email');
-    $message = contactField('message');
-
-    if (!preg_match('/\A[^\r\n]{1,100}\z/u', $name)) {
-        $formError = 'Enter a name of up to 100 characters.';
-    } elseif (strlen($email) > 254 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $formError = 'Enter a valid email address so we can reply.';
-    } elseif (!is_string($_POST['message'] ?? '') || !preg_match('/\A.{0,3000}\z/us', $message)) {
-        $formError = 'Enter a message of up to 3,000 characters.';
-    }
-
-    if ($formError !== '') {
-        http_response_code(422);
-    } else {
-        $recipient = 'contact@findverge.com';
-        $body = "Name: {$name}\nEmail: {$email}\n\nMessage:\n{$message}\n";
-        $headers = [
-            'From' => "FindVerge <{$recipient}>",
-            'Reply-To' => $email,
-            'MIME-Version' => '1.0',
-            'Content-Type' => 'text/plain; charset=UTF-8',
-            'Content-Transfer-Encoding' => 'base64',
-        ];
-
-        if (function_exists('mail') && @mail(
-            $recipient,
-            'New FindVerge enquiry',
-            chunk_split(base64_encode($body)),
-            $headers
-        )) {
-            header('Location: /thank-you/', true, 303);
-            exit;
-        }
-
-        error_log('FindVerge contact form: the mail transport did not accept the enquiry.');
-        http_response_code(503);
-        $formError = 'We could not send your enquiry right now. Please try again in a moment.';
-    }
-}
-?>
 <!doctype html>
 <html lang="en-SG">
 <head>
@@ -334,27 +271,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <h2 id="contact-title">Send us an enquiry</h2>
           <p class="lede">Have a question about the guide, or a topic you would like us to cover? Leave your name and email address and we will reply by email. We cannot help with job applications or placements.</p>
         </div>
-        <form class="contact-form" method="post" action="./#contact">
-          <?php if ($formError !== ''): ?>
-            <p class="form-error" role="alert"><?= escapeContactValue($formError) ?></p>
-          <?php endif; ?>
+        <div class="contact-form">
           <fieldset>
             <div class="field">
               <label for="contact-name">Name</label>
-              <input id="contact-name" name="name" autocomplete="name" maxlength="100" value="<?= escapeContactValue($name) ?>" required>
+              <input id="contact-name" autocomplete="name" maxlength="100" required>
             </div>
             <div class="field">
               <label for="contact-email">Email address</label>
-              <input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" value="<?= escapeContactValue($email) ?>" required>
+              <input id="contact-email" type="email" autocomplete="email" maxlength="254" required>
             </div>
             <div class="field">
               <label for="contact-message">Message <span>(optional)</span></label>
-              <textarea id="contact-message" name="message" rows="5" maxlength="3000"><?= escapeContactValue($message) ?></textarea>
+              <textarea id="contact-message" rows="5" maxlength="3000"></textarea>
             </div>
             <p class="form-note">We use your details only to reply to you. Please do not include your NRIC number, bank details or passwords. See our <a href="privacy-policy/">privacy policy</a>.</p>
-            <button class="button button-primary" type="submit">Send enquiry</button>
+            <button class="button button-primary" type="button" disabled>Send enquiry</button>
           </fieldset>
-        </form>
+        </div>
       </div>
     </section>
   </main>
