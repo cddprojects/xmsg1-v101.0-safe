@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteRule ^(privacy|thank-you)(?:/index\.html|/|\.html)$ /$1 [R=301,L]
+RewriteRule ^(privacy|thank-you)$ $1.html [END]
