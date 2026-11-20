@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             chunk_split(base64_encode($body)),
             $headers
         )) {
-            header('Location: /thank-you', true, 303);
+            header('Location: /thank-you/', true, 303);
             exit;
         }
 
@@ -321,7 +321,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </details>
           <details>
             <summary>How do you use my details?</summary>
-            <p>We use your name and email address only to reply to your enquiry. Read our <a href="privacy">privacy policy</a> for details.</p>
+            <p>We use your name and email address only to reply to your enquiry. Read our <a href="privacy/">privacy policy</a> for details.</p>
           </details>
         </div>
       </div>
@@ -351,7 +351,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <label for="contact-message">Message <span>(optional)</span></label>
               <textarea id="contact-message" name="message" rows="5" maxlength="3000"><?= escapeContactValue($message) ?></textarea>
             </div>
-            <p class="form-note">We use your details only to reply to you. Please do not include your NRIC number, bank details or passwords. See our <a href="privacy">privacy policy</a>.</p>
+            <p class="form-note">We use your details only to reply to you. Please do not include your NRIC number, bank details or passwords. See our <a href="privacy/">privacy policy</a>.</p>
             <button class="button button-primary" type="submit">Send enquiry</button>
           </fieldset>
         </form>
@@ -371,7 +371,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="footer-bottom">
         <p>© 2026 FindVerge. All rights reserved.</p>
         <div class="footer-links">
-          <a href="privacy">Privacy policy</a>
+          <a href="privacy/">Privacy policy</a>
           <a href="#main">Back to top <span aria-hidden="true">↑</span></a>
         </div>
       </div>
